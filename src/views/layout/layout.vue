@@ -4,7 +4,7 @@
       <el-aside width="200">
         <div class="logo"></div>
         <el-menu
-          :default-active="woht"
+          :default-active="$route.path"
           unique-opened
           router
           class="el-menu-vertical-demo"
@@ -47,8 +47,7 @@ export default {
     return {
       dialogVisible: false,
       isCollapse: false,
-      datalist: [],
-      woht: location.hash.substring(1)
+      datalist: []
     };
   },
   methods: {

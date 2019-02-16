@@ -24,11 +24,15 @@ const router = new Router({
         path: "roles",
         name: 'roles',
         component: () => import('./views/layout/roles/roles')
+      }, {
+        path: "rights",
+        name: 'rights',
+        component: () => import('./views/layout/rights/rights')
       }]
     },
   ]
 });
-router.beforeEach ((to, from, next) => {
+router.beforeEach((to, from, next) => {
   if (to.meta.unrequery) {
     return next();
   }

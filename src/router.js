@@ -17,18 +17,29 @@ const router = new Router({
       name: "layout",
       component: reslove => require(["./views/layout/layout"], reslove),
       children: [{
-        path: "users",
-        name: 'users',
-        component: reslove => require(["./views/layout/users/users"], reslove)
-      }, {
-        path: "roles",
-        name: 'roles',
-        component: () => import('./views/layout/roles/roles')
-      }, {
-        path: "rights",
-        name: 'rights',
-        component: () => import('./views/layout/rights/rights')
-      }]
+          path: "users",
+          name: 'users',
+          component: reslove => require(["./views/layout/users/users"], reslove)
+        }, {
+          path: "roles",
+          name: 'roles',
+          component: () => import('./views/layout/roles/roles')
+        }, {
+          path: "rights",
+          name: 'rights',
+          component: () => import('./views/layout/rights/rights')
+        },
+        {
+          path: 'categories',
+          name: 'categorie',
+          component: () => import('./views/layout/categories/categories.vue')
+        },
+        {
+          path: 'params',
+          name: 'params',
+          component: () => import('./views/layout/commodity/params')
+        }
+      ]
     },
   ]
 });

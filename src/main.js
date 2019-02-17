@@ -5,11 +5,12 @@ import store from './store'
 import Element from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css';
 import axios from 'axios'
-
+import breadcrumb from "./views/layout/components/Breadcrumb";
 Vue.config.productionTip = false
 Vue.use(Element)
-
-
+Vue.component(
+  'breadcrumb',breadcrumb
+)
 
 axios.interceptors.request.use(function (config) {
   if (localStorage.mycode) {

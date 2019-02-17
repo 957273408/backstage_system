@@ -9,9 +9,11 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "dzh-tree-grid": "^1.0.0",
     "element-ui": "^2.5.1",
     "less": "^3.9.0",
     "less-loader": "^4.1.0",
+    "sass-loader": "^7.1.0",
     "vue": "^2.5.21",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1"

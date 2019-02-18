@@ -11,28 +11,35 @@
     <el-tabs type="border-card">
       <el-tab-pane label="动态参数">
         <div style="height:40px">
-          <el-button type="success" @click plain>添加动态参数</el-button>
+          <el-button type="success"  plain>添加动态参数</el-button>
         </div>
         <el-table :data="tablelist" border style="width: 100%">
           <el-table-column type="expand">
             <template slot-scope="props">
               <el-tag
-                :key="tag"
-                v-for="tag in dynamicTags"
+                :key="index"
+                v-for="(tag,index) in props.row.attr_array"
                 closable
                 :disable-transitions="false"
-                @close="handleClose(tag)"
+                @close="handleClose(props.row,index)"
               >{{tag}}</el-tag>
               <el-input
+                placeholder="请输入按回车添加"
                 class="input-new-tag"
-                v-if="inputVisible"
-                v-model="inputValue"
+                v-if="props.row.inputVisible"
+                v-model="props.row.inputValue"
                 ref="saveTagInput"
                 size="small"
-                @keyup.enter.native="handleInputConfirm"
-                @blur="handleInputConfirm"
+                @keyup.enter.native="handleInputConfirm(props.row)"
+                @blur="clearinput(props.row)"
               ></el-input>
-              <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
+              <el-button
+                v-else
+                ref="123"
+                class="button-new-tag"
+                size="small"
+                @click="showInput(props.row)"
+              >+ New Tag</el-button>
             </template>
           </el-table-column>
           <el-table-column align="center" type="index" width="140"></el-table-column>
@@ -84,19 +91,8 @@ export default {
     };
   },
   methods: {
-    todo(e) {
-      console.log(e);
-    },
     async handleChange(e) {
-      let res = await this.$axios.get(
-        `categories/${e[e.length - 1]}/attributes`,
-        {
-          params: {
-            sel: "many"
-          }
-        }
-      );
-      this.tablelist = res.data.data;
+      this.gettablelist()
     },
     async getoptions() {
       let res = await this.$axios.get("categories", {
@@ -110,6 +106,10 @@ export default {
         this.options[0].children[0].cat_id,
         this.options[0].children[0].children[0].cat_id
       ];
+      this.gettablelist();
+    },
+    async gettablelist() {
+      // console.log(this.selectedOptions3);
       let res2 = await this.$axios.get(
         `categories/${
           this.selectedOptions3[this.selectedOptions3.length - 1]
@@ -120,7 +120,71 @@ export default {
           }
         }
       );
+      res2.data.data.forEach(e => {
+        e.attr_array =
+          e.attr_vals.trim().length == 0 ? [] : e.attr_vals.split(",");
+        e.inputValue = "";
+        e.inputVisible = false;
+      });
       this.tablelist = res2.data.data;
+    },
+    // tag功能
+    showInput(e) {
+      e.inputVisible = true;
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.focus();
+      });
+    },
+    async handleClose(e, i) {
+      // console.log(e, i);
+      e.attr_array.splice(i, 1);
+      let res = await this.$axios.put(
+        `categories/${e.cat_id}/attributes/${e.attr_id}`,
+        {
+          attr_name: e.attr_name,
+          attr_sel: "many",
+          attr_vals: e.attr_array.toString()
+        }
+      );
+      // console.log(res);
+       if (res.status == 200) {
+        this.$message({
+          type: "success",
+          message: res.data.meta.msg
+        });
+      }
+    },
+    async handleInputConfirm(e) {
+      if (!e.inputValue) {
+        this.$message({
+          message: "请输入内容哦",
+          type: "warning"
+        });
+        return;
+      }
+      console.log(e.attr_vals + "," + e.inputValue);
+      e.attr_array.push(e.inputValue);
+      let res = await this.$axios.put(
+        `categories/${e.cat_id}/attributes/${e.attr_id}`,
+        {
+          attr_name: e.attr_name,
+          attr_sel: "many",
+          attr_vals: e.attr_array.toString()
+        }
+      );
+      console.log(res);
+      if (res.status == 200) {
+        this.$message({
+          type: "success",
+          message: res.data.meta.msg
+        });
+      }
+      e.inputVisible = false;
+      e.inputValue = "";
+    },
+    clearinput(e) {
+      e.inputValue = "";
+      e.inputVisible = false;
     }
   },
   created() {
@@ -130,4 +194,19 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.el-tag + .el-tag {
+  margin-left: 10px;
+}
+.button-new-tag {
+  margin-left: 10px;
+  height: 32px;
+  line-height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.input-new-tag {
+  width: 90px;
+  margin-left: 10px;
+  vertical-align: bottom;
+}
 </style>

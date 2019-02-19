@@ -4,6 +4,7 @@ import login from "./views/login.vue";
 
 Vue.use(Router);
 const router = new Router({
+  mode: 'history',
   routes: [{
       path: "/",
       name: "home",
@@ -38,7 +39,12 @@ const router = new Router({
           path: 'params',
           name: 'params',
           component: () => import('./views/layout/commodity/params')
-        }
+        },
+        {
+          path: 'goods',
+          name: 'goods',
+          component: () => import('./views/layout/goods/goods')
+        },
       ]
     },
   ]
